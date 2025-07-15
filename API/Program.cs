@@ -1,3 +1,5 @@
+using Application.Core;
+using Application.TaskItems.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -12,9 +14,21 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetTaskItemsList.Handler>());
+
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 //app.UseAuthorization();
+
+app.UseCors(x =>
+    x.AllowAnyHeader()
+    .AllowAnyMethod()
+    .WithOrigins("http://localhost:3000", "https://localhost:3000")
+);
 
 app.MapControllers();
 

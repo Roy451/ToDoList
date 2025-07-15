@@ -29,7 +29,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsCompleted")
+                    b.Property<bool?>("IsCompleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")

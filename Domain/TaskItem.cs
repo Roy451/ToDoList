@@ -11,6 +11,6 @@ namespace Domain
         public required string Title { get; set; }
         public DateTime DateAdded { get; set; }
         public required string Category { get; set; }
-        public bool IsCompleted { get; set; }
+        public bool? IsCompleted { get; set; }
     }
 }

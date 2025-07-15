@@ -11,8 +11,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250713104521_InititalCreate")]
-    partial class InititalCreate
+    [Migration("20250715113034_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,7 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsCompleted")
+                    b.Property<bool?>("IsCompleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")

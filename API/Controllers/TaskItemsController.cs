@@ -1,33 +1,45 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.TaskItems.Commands;
+using Application.TaskItems.Queries;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
-    public class TaskItemsController(AppDbContext context) : BaseApiController
+    public class TaskItemsController() : BaseApiController
     {
         [HttpGet]
         public async Task<ActionResult<List<TaskItem>>> GetTaskItemsList()
         {
-            return await context.TaskItems.ToListAsync();
+            return await Mediator.Send(new GetTaskItemsList.Query());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TaskItem>> GetTaskItemById(string id)
         {
-            var taskItem = await context.TaskItems.FindAsync(id);
+            return HandleResult(await Mediator.Send(new GetTaskItemDetails.Query { Id = id }));
+        }
 
-            if (taskItem == null)
-            {
-                return NotFound();
-            }
+        [HttpPost]
+        public async Task<ActionResult<string>> CreateTaskItem(TaskItem newTaskItem)
+        {
+            return await Mediator.Send(new AddTaskItem.Command { TaskItem = newTaskItem });
+        }
 
-            return taskItem;
+        [HttpPut]
+        public async Task<ActionResult> EditTaskItem(TaskItem taskItem)
+        {
+            await Mediator.Send(new EditTaskItem.Command { TaskItem = taskItem });
+
+            return NoContent();
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteTaskItem(string id)
+        {
+            await Mediator.Send(new DeleteTaskItem.Command { Id = id });
+
+            return Ok();
         }
     }
 }
