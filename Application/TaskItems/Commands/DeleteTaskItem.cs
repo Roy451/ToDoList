@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Core;
 using MediatR;
 using Persistence;
 
@@ -9,25 +10,32 @@ namespace Application.TaskItems.Commands
 {
     public class DeleteTaskItem
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public required string Id { get; set; }
         }
 
-        public class Handler(AppDbContext context) : IRequestHandler<Command>
+        public class Handler(AppDbContext context) : IRequestHandler<Command, Result<Unit>>
         {
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var taskItem = await context.TaskItems.FindAsync([request.Id], cancellationToken);
 
                 if (taskItem == null)
                 {
-                    throw new Exception("Could Not Find TaskItem To Delete");
+                    return Result<Unit>.Failure("TaskItem Not Found", 404);
                 }
 
                 context.TaskItems.Remove(taskItem);
 
-                await context.SaveChangesAsync(cancellationToken);
+                var result = await context.SaveChangesAsync(cancellationToken) > 0;
+
+                if (!result)
+                {
+                    return Result<Unit>.Failure("Failed To Delete The TaskItem", 400);
+                }
+
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

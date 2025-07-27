@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.Core;
+using Application.TaskItems.DTOs;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Persistence;
@@ -10,20 +9,27 @@ namespace Application.TaskItems.Commands
 {
     public class AddTaskItem
     {
-        public class Command : IRequest<string>
+        public class Command : IRequest<Result<string>>
         {
-            public required TaskItem TaskItem { get; set; }
+            public required AddTaskItemDto TaskItemDto { get; set; }
         }
 
-        public class Handler(AppDbContext context) : IRequestHandler<Command, string>
+        public class Handler(AppDbContext context, IMapper mapper) : IRequestHandler<Command, Result<string>>
         {
-            public async Task<string> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
             {
-                context.TaskItems.Add(request.TaskItem);
+                var taskItem = mapper.Map<TaskItem>(request.TaskItemDto);
 
-                await context.SaveChangesAsync(cancellationToken);
+                context.TaskItems.Add(taskItem);
 
-                return request.TaskItem.Id;
+                var result = await context.SaveChangesAsync(cancellationToken) > 0;
+
+                if (!result)
+                {     
+                    return Result<string>.Failure("Could Not Add New TaskItem", 400);
+                }
+
+                return Result<string>.Success(taskItem.Id);
             }
         }
     }

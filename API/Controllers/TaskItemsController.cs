@@ -1,4 +1,5 @@
 using Application.TaskItems.Commands;
+using Application.TaskItems.DTOs;
 using Application.TaskItems.Queries;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -20,26 +21,23 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<string>> CreateTaskItem(TaskItem newTaskItem)
+        public async Task<ActionResult<string>> CreateTaskItem(AddTaskItemDto newTaskItemDto)
         {
-            return await Mediator.Send(new AddTaskItem.Command { TaskItem = newTaskItem });
+            return HandleResult(await Mediator.Send(new AddTaskItem.Command { TaskItemDto = newTaskItemDto }));
         }
 
-        [HttpPut]
-        public async Task<ActionResult> EditTaskItem(TaskItem taskItem)
+        [HttpPut("{id}")]
+        public async Task<ActionResult> EditTaskItem(string id, TaskItem taskItem)
         {
-            await Mediator.Send(new EditTaskItem.Command { TaskItem = taskItem });
-
-            return NoContent();
+            taskItem.Id = id;
+            return HandleResult(await Mediator.Send(new EditTaskItem.Command { TaskItem = taskItem }));
         }
 
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTaskItem(string id)
         {
-            await Mediator.Send(new DeleteTaskItem.Command { Id = id });
-
-            return Ok();
+            return HandleResult(await Mediator.Send(new DeleteTaskItem.Command { Id = id }));
         }
     }
 }
