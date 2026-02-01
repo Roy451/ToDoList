@@ -2,24 +2,26 @@ import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
-
+import { useTaskItems } from "../../../../lib/hooks/useTaskItems";
+import { formatDate } from "../../../../lib/util/util";
 
 
 type Props = {
-    taskItems: TaskItem[];
+    //taskItems: TaskItem[];
     //submitForm: (taskItem: TaskItem) => void;
     onEditTask: (task: TaskItem) => void;
-    deleteTaskItem: (id: string) => void;
-    markTaskCompleted: (id: string) => void;
+    //deleteTaskItem: (id: string) => void;
+    //markTaskCompleted: (id: string) => void;
 }
 
 
-export default function TaskItemDashboard({ taskItems, onEditTask, deleteTaskItem, markTaskCompleted }: Props) {
+export default function TaskItemDashboard({ onEditTask }: Props) {
 
+    const {deleteTaskItem, markTaskCompleted, taskItems} = useTaskItems();
 
     return (
         <>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} >
                 {/* Maybe Delete the size="small" aria-label="a dense table" */}
                 <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table" >
                     <TableHead>
@@ -31,15 +33,16 @@ export default function TaskItemDashboard({ taskItems, onEditTask, deleteTaskIte
                             <TableCell align="center">Edit</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {taskItems.map((row) => (
+                    <TableBody >
+                        {taskItems && taskItems.map((row) => (
                             <TableRow
-                                key={row.dateAdded}
+                                key={row.id} // Used to be "row.dateAdded"
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">{row.title}</TableCell>
                                 <TableCell align="right">{row.category}</TableCell>
-                                <TableCell align="right">{row.dateAdded}</TableCell>
+                                {/* <TableCell align="right">{row.dateAdded}</TableCell> */}
+                                <TableCell align="right">{formatDate(row.dateAdded)}</TableCell>
 
                                 <TableCell
                                     align="right"
@@ -64,11 +67,16 @@ export default function TaskItemDashboard({ taskItems, onEditTask, deleteTaskIte
                                 </TableCell>
 
                                 <TableCell key={row.id} align="right">
-                                    <IconButton onClick={() => onEditTask(row)} aria-label="EditIcon">
+                                    <IconButton onClick={() => onEditTask(row)} aria-label="EditIcon" >
                                         <EditIcon />
                                     </IconButton>
 
-                                    <IconButton onClick={() => deleteTaskItem(row.id)} color="error" aria-label="Delete">
+                                    <IconButton 
+                                        onClick={() => deleteTaskItem.mutate(row.id)} 
+                                        color="error" 
+                                        disabled={deleteTaskItem.isPending && deleteTaskItem.variables == row.id} 
+                                        aria-label="Delete"
+                                    >
                                         <DeleteIcon />
                                     </IconButton>
 
@@ -82,7 +90,7 @@ export default function TaskItemDashboard({ taskItems, onEditTask, deleteTaskIte
                                             '&:hover': { backgroundColor: '#388e3c' },
                                             ml: 1
                                         }}
-                                        onClick={() => markTaskCompleted(row.id)}
+                                        onClick={() => markTaskCompleted.mutate({...row, isCompleted: true})}
                                     >
                                         <CheckIcon fontSize="small" />
                                     </Button>

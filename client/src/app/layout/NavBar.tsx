@@ -5,13 +5,14 @@ import Typography from '@mui/material/Typography';
 import { Button, IconButton, MenuItem } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-
 type Props = {
   onAddTask: () => void;
 };
 
 
 export default function NavBar({ onAddTask }: Props) {
+
+
     return (
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
             <AppBar
@@ -25,7 +26,7 @@ export default function NavBar({ onAddTask }: Props) {
                 }}
             >
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, }}> {/* Box dosent do anything really!!!! Check this!!!! */}
                         <Typography variant='h5' fontWeight='bold'>To-Do-List</Typography>
                     </Box>
 

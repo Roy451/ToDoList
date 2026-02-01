@@ -1,14 +1,14 @@
 using Application.TaskItems.Commands;
+using Application.TaskItems.DTOs;
 using FluentValidation;
 
 namespace Application.TaskItems.Validators
 {
-    public class AddTaskItemValidator : AbstractValidator<AddTaskItem.Command>
+    public class AddTaskItemValidator : BaseTaskItemValidator<AddTaskItem.Command, AddTaskItemDto>
     {
-        public AddTaskItemValidator()
+        public AddTaskItemValidator() : base(x => x.TaskItemDto)
         {
-            RuleFor(x => x.TaskItemDto.Title).NotEmpty().WithMessage("Title is Required");
-            RuleFor(x => x.TaskItemDto.Category).NotEmpty().WithMessage("Category is Required");
+            
         }
     }
 }

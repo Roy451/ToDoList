@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Application.TaskItems.DTOs
 {
-    public class AddTaskItemDto : BaseTaskItemDto
+    public class EditTaskItemDto : BaseTaskItemDto
     {
+        public string Id { get; set; } = "";
         
     }
 }

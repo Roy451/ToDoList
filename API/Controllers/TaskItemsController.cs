@@ -26,11 +26,10 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new AddTaskItem.Command { TaskItemDto = newTaskItemDto }));
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> EditTaskItem(string id, TaskItem taskItem)
+        [HttpPut]
+        public async Task<ActionResult> EditTaskItem([FromBody] EditTaskItemDto editTaskItemDto)
         {
-            taskItem.Id = id;
-            return HandleResult(await Mediator.Send(new EditTaskItem.Command { TaskItem = taskItem }));
+            return HandleResult(await Mediator.Send(new EditTaskItem.Command { TaskItemDto = editTaskItemDto }));
         }
 
 

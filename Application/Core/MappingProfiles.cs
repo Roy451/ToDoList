@@ -10,6 +10,7 @@ namespace Application.Core
         {
             CreateMap<TaskItem, TaskItem>();
             CreateMap<AddTaskItemDto, TaskItem>();
+            CreateMap<EditTaskItemDto, TaskItem>();
         }
     }
 }
